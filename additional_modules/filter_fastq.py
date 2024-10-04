@@ -1,11 +1,18 @@
-from typing import  Tuple, Union, Dict
+from typing import Tuple, Union, Dict
+
+
 def gc_content_calculator(sequence):
     length_sequence = len(sequence)
     if length_sequence == 0:
         return 0.0
-    gc_count = sequence.count('G') + sequence.count('C') + sequence.count('g') + sequence.count('c')
+    gc_count = (
+        sequence.count("G")
+        + sequence.count("C")
+        + sequence.count("g")
+        + sequence.count("c")
+    )
     if sequence:
-        return gc_count/length_sequence * 100
+        return gc_count / length_sequence * 100
     else:
         return 0
 
@@ -20,13 +27,4 @@ def quality_check(quality):
     total_quality = 0
     for char in quality:
         total_quality += ord(char) - 33
-    return total_quality/len(quality)
-
-
-
-
-
-
-
-
-
+    return total_quality / len(quality)
