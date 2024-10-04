@@ -1,7 +1,7 @@
-from typing import Tuple, Union, Dict
+from typing import Tuple
 
 
-def gc_content_calculator(sequence):
+def gc_content_calculator(sequence: str) -> float:
     length_sequence = len(sequence)
     if length_sequence == 0:
         return 0.0
@@ -17,11 +17,11 @@ def gc_content_calculator(sequence):
         return 0
 
 
-def check_length_bounds(length: int, length_bounds: Tuple[int, int]):
+def is_length_bounds(length: int, length_bounds: Tuple[int, int]) -> bool:
     return length_bounds[0] <= length <= length_bounds[1]
 
 
-def quality_check(quality):
+def quality_check(quality: str) -> float:
     if len(quality) == 0:
         return 0.0
     total_quality = 0
