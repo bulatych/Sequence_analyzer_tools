@@ -1,4 +1,3 @@
-<<<<<<< myfirst_tool
 # Sequence_analyzer
 | Sequence_analyzer - is a toolkit for working with DNA/RNA sequences and fastq sequences. The tool performs RNA/DNA sequences processing as well as fastq sequences filtering depending on the input criteria. | <img src="tool_pict.png" alt="Логотип проекта" width="300"/> |
 |:--------------------------------------------------------|:-------------------------------------------------------:|
