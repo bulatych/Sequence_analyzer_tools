@@ -9,7 +9,10 @@ from additional_modules.dna_rna_tools import (
 from additional_modules.filter_fastq import (
     is_length_bounds,
     gc_content_calculator,
+    calc_quality,
     quality_check,
+    check_length,
+    check_gc_content
 )
 
 
@@ -77,18 +80,25 @@ def filter_fastq(
         gc_bounds = (0, gc_bounds)
     if isinstance(length_bounds, (int)):
         length_bounds = (0, length_bounds)
-
+    # checks = [
+    #     quality_check,
+    #     check_length,
+    #     check_gc_content,
+    #
+    # ]
+    # filtered_seqs = {}
+    # for name, (sequence, quality) in seqs.items():
+    #     if all(check(sequence, quality) for check in checks):
+    #         filtered_seqs[name] = (sequence, quality)
+    # return filtered_seqs
     filtered_seqs = {}
-
     for name, (sequence, quality) in seqs.items():
-
-        if not is_length_bounds(len(sequence), length_bounds):
-            continue
-        gc_content = gc_content_calculator(sequence)
-        if not gc_bounds[0] <= gc_content <= gc_bounds[1]:
-            continue
-        if quality_check(quality) < quality_threshold:
-            continue
-
-        filtered_seqs[name] = (sequence, quality)
+            if (quality_check(quality, quality_threshold) and
+                check_length(length_bounds, sequence) and
+                check_gc_content(gc_bounds, sequence)):
+                filtered_seqs[name] = (sequence, quality)
     return filtered_seqs
+
+from example_data import EXAMPLE_FASTQ
+print(filter_fastq(EXAMPLE_FASTQ, (50), (200), 30), sep ="\n")
+
