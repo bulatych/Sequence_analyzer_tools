@@ -80,17 +80,6 @@ def filter_fastq(
         gc_bounds = (0, gc_bounds)
     if isinstance(length_bounds, (int)):
         length_bounds = (0, length_bounds)
-    # checks = [
-    #     quality_check,
-    #     check_length,
-    #     check_gc_content,
-    #
-    # ]
-    # filtered_seqs = {}
-    # for name, (sequence, quality) in seqs.items():
-    #     if all(check(sequence, quality) for check in checks):
-    #         filtered_seqs[name] = (sequence, quality)
-    # return filtered_seqs
     filtered_seqs = {}
     for name, (sequence, quality) in seqs.items():
             if (quality_check(quality, quality_threshold) and
@@ -100,5 +89,5 @@ def filter_fastq(
     return filtered_seqs
 
 from example_data import EXAMPLE_FASTQ
-print(filter_fastq(EXAMPLE_FASTQ, (50), (200), 30), sep ="\n")
+print(filter_fastq(EXAMPLE_FASTQ, (50, 100), (200, 300), 30), sep ="\n")
 
