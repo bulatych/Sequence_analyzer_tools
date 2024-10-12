@@ -1,4 +1,3 @@
-from tabnanny import check
 from typing import Tuple
 
 
@@ -30,9 +29,11 @@ def calc_quality(quality: str) -> float:
         total_quality += ord(char) - 33
     return total_quality / len(quality)
 
-def quality_check(quality: str, quality_threshold: int) -> bool:
+
+def check_quality(quality: str, quality_threshold: int) -> bool:
     avg_quality = calc_quality(quality)
     return avg_quality >= quality_threshold
+
 
 def check_length(length_bounds: Tuple[int, int], sequence: str) -> bool:
     return is_length_bounds(len(sequence), length_bounds)
