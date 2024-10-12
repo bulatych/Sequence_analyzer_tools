@@ -15,7 +15,9 @@ The **Sequence_analyzer** toolkit includes the following key features:
 - **run_dna_rna_tools**: Analyze and manipulate DNA and RNA sequences. It works with additional modules that allow to perform the following operations: transcribing a sequence, returning a reverse sequence, finding a complementary chain and returning a reverse complementary sequence.
 - **filter_fastq**: Filter FASTQ sequences based on various criteria including GC content, sequence length, and quality thresholds.  The function works on the fly, accepts a fastq file,
     selects sequences for recording and saves the filtered data. Functions checks the existence of output directory and if missing creates a folder "filtered"
-
+- **bio_files_processor.py**: Additional module. Consist of two functions to work with biological data. `convert_multiline_fasta_to_oneline` function reads a multi-line FASTA file and
+   concatenates the nucleotide or protein sequences into single lines, and writes the result to a new FASTA formatted file. `parse_blast_output`  function parse a BLAST output file to extract 
+    and sort significant protein names
 The toolkit is designed to improve genomic data processing, making it accessible for both beginners and experienced users.
 ## Installation
 
@@ -54,8 +56,15 @@ from additional_modules.dna_rna_tools import (seq_transcr, seq_reverse, seq_comp
 results = run_dna_rna_tools(*args)
 *seqs, procedure = args
 ```
+The `convert_multiline_fasta_to_oneline` converts a multi-line FASTA file into a single-line FASTA file.
+``` python
+convert_multiline_fasta_to_oneline("example_multiline_fasta.fasta", "example_oneline_fasta.fasta")
+```
 
-The ``
+The `parse_blast_output` parses a BLAST output file to extract and sort significant protein names
+``` python
+parse_blast_output("example_blast_results.txt", "proteins_name")
+```
 ## FAQ
 **1. What is the purpose of the Sequence_analyzer toolkit?**  
 The toolkit is designed to assist researchers in analyzing and filtering genomic data efficiently. It offers functions for processing DNA/RNA and FASTQ sequences, making data handling easier.
