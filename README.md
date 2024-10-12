@@ -13,7 +13,8 @@ Author:
 ## Description
 The **Sequence_analyzer** toolkit includes the following key features:
 - **run_dna_rna_tools**: Analyze and manipulate DNA and RNA sequences. It works with additional modules that allow to perform the following operations: transcribing a sequence, returning a reverse sequence, finding a complementary chain and returning a reverse complementary sequence.
-- **filter_fastq**: Filter FASTQ sequences based on various criteria including GC content, sequence length, and quality thresholds. Returns a dictionary consisting only of those sequels that satisfy all the conditions.
+- **filter_fastq**: Filter FASTQ sequences based on various criteria including GC content, sequence length, and quality thresholds.  The function works on the fly, accepts a fastq file,
+    selects sequences for recording and saves the filtered data. Functions checks the existence of output directory and if missing creates a folder "filtered"
 
 The toolkit is designed to improve genomic data processing, making it accessible for both beginners and experienced users.
 ## Installation
@@ -26,21 +27,23 @@ To use the Sequence_analyzer toolkit, follow these steps:
    cd Sequence_analyzer_tools
    python Sequence_analyzer.py 
 ## Examples
-The `filter_fastq` function allows you to filter sequences based on specified criteria. Here’s an example of how to use it:
+The `filter_fastq` function allows you to filter sequences based on specified criteria. Function accepts 5 arguments as input
+The function works on the fly, accepts a fastq file, selects sequences for recording and saves the filtered data. Functions
+checks the existence of output directory and if missing creates. Here’s an example of how to use it:
 ```python
 from Sequence_analyzer import filter_fastq
-from additional_modules.filter_fastq import is_length_bounds, gc_content_calculator,quality_check
-seqs = {
-    "seq1": ("ATCGTAGC", "II!!II@II"),
-    "seq2": ("GCTAGCTA", "II@#!@@II"),
-    "seq3": ("AAGCTGTA", "HII!G@HH"),
-}
+from additional_modules.filter_fastq import (
+    is_length_bounds,
+    gc_content_calculator,
+    calc_quality,check_quality,
+    check_length,
+    check_gc_content)
 
 # Parameteres
-gc_bounds = (20, 80)          
-length_bounds = (7, 15)         
-quality_threshold = 25
-filtered_seqs = filter_fastq(seqs, gc_bounds, length_bounds, quality_threshold)
+gc_bounds = (0, 20)          
+length_bounds = (0, 100)         
+quality_threshold = 30
+filter_fastq("example_fastq.fastq", "filtered_fastq.fastq", (0, 20), (0, 100), 30)
 ```
 
 The `run_dna_rna_tools` function allows to process sequences based on procedure
@@ -51,6 +54,8 @@ from additional_modules.dna_rna_tools import (seq_transcr, seq_reverse, seq_comp
 results = run_dna_rna_tools(*args)
 *seqs, procedure = args
 ```
+
+The ``
 ## FAQ
 **1. What is the purpose of the Sequence_analyzer toolkit?**  
 The toolkit is designed to assist researchers in analyzing and filtering genomic data efficiently. It offers functions for processing DNA/RNA and FASTQ sequences, making data handling easier.
