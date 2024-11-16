@@ -1,4 +1,3 @@
-# Function 1
 def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str) -> None:
     """
     Convert a multi-line FASTA file into a single-line FASTA file.
@@ -34,13 +33,6 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str) -> N
             fasta_out.write(sequence + "\n")
 
 
-# Example of running the function 1
-convert_multiline_fasta_to_oneline(
-    "example_multiline_fasta.fasta", "example_oneline_fasta.fasta"
-)
-
-
-# Function 2
 def parse_blast_output(input_file: str, output_file: str) -> None:
     """
     Parse a BLAST output file to extract and sort significant protein names.
@@ -78,7 +70,3 @@ def parse_blast_output(input_file: str, output_file: str) -> None:
     with open(output_file, "w") as file_out:
         for protein in sorted_proteins:
             file_out.write(protein + "\n")
-
-
-# Example of running the function 2
-parse_blast_output("example_blast_results.txt", "proteins_name")
