@@ -74,7 +74,7 @@ class RNASequence(NucleicAcidSequence):
     def find_stop_codons(self, rna_sequence: str):
         stop_positions = []
         for i in range(0, len(rna_sequence) - 2, 3):
-            codon = rna_sequence[i : i + 3]
+            codon = rna_sequence[i:i + 3]
             if codon in self.stop_codons:
                 stop_positions.append(i)
         return stop_positions
