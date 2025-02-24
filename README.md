@@ -1,5 +1,5 @@
 # Sequence Analyzer
-
+"This project was created as part of a homework for the Bioinformatics Institute within the Python course."
 | Sequence Analyzer - A toolkit for processing DNA/RNA sequences and FASTQ files. This tool allows sequence manipulation and filtering based on specific criteria. | <img src="tool_pict.png" alt="Project Logo" width="300"/> |
 |:--------------------------------------------------------|:-------------------------------------------------------:|
 
