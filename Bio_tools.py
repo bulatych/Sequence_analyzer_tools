@@ -6,7 +6,16 @@ from typing import Dict, Union, Tuple
 
 
 class BiologicalSequence(ABC):
+    """
+    An abstract base class representing a biological sequence.
+    """
     def __init__(self, sequence: str, alphabet: set):
+        """
+        Initialize a biological sequence.
+
+        :param sequence: The sequence string.
+        :param alphabet: A set of valid characters for the sequence.
+        """
         self.sequence = sequence
         self.alphabet = alphabet
         if not self._check_alphabet():
@@ -36,6 +45,9 @@ class BiologicalSequence(ABC):
 
 
 class NucleicAcidSequence(BiologicalSequence):
+    """
+    A base class for nucleic acid sequences (DNA and RNA).
+    """
     complement_map = {}  # for polymorphism
 
     def complement(self):
@@ -72,6 +84,12 @@ class RNASequence(NucleicAcidSequence):
         super().__init__(sequence, {"A", "U", "C", "G"})
 
     def find_stop_codons(self, rna_sequence: str):
+         """
+        Identify positions of stop codons in an RNA sequence.
+
+        :param rna_sequence: A string representing the RNA sequence.
+        :return: A list of indices where stop codons occur.
+        """
         stop_positions = []
         for i in range(0, len(rna_sequence) - 2, 3):
             codon = rna_sequence[i:i + 3]
@@ -115,6 +133,12 @@ class AminoAcidSequence(BiologicalSequence):
         return amino in {"F", "W", "Y"}
 
     def count_repeating_amino(self, amino_sequence):
+          """
+        Count occurrences of each amino acid in a sequence.
+
+        :param amino_sequence: A string representing the amino acid sequence.
+        :return: A dictionary with amino acids as keys and their counts as values.
+        """
         amino_count = {}
         for amino in amino_sequence:
             if amino in amino_count:
@@ -135,6 +159,15 @@ def filter_fastq(
     length_bounds: Union[Tuple[int, int], int] = (0, 2**32),
     quality_threshold: int = 0,
 ) -> Dict[str, Tuple[str, str]]:
+    """
+    Filter sequences from a FASTQ file based on GC content, length, and quality.
+
+    :param input_fastq: Path to the input FASTQ file.
+    :param output_fastq: Path to the output FASTQ file.
+    :param gc_bounds: Tuple representing the min and max GC content allowed (percentage).
+    :param length_bounds: Tuple representing the min and max length of sequences allowed.
+    :param quality_threshold: Minimum average quality score required.
+    """
 
     if isinstance(gc_bounds, (int, float)):
         gc_bounds = (0, gc_bounds)
