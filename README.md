@@ -1,79 +1,91 @@
-# Sequence_analyzer
-| Sequence_analyzer - is a toolkit for working with DNA/RNA sequences and fastq sequences. The tool performs RNA/DNA sequences processing as well as fastq sequences filtering depending on the input criteria. | <img src="tool_pict.png" alt="Логотип проекта" width="300"/> |
+# Sequence Analyzer
+"This project was created as part of a homework for the Bioinformatics Institute within the Python course."
+| Sequence Analyzer - A toolkit for processing DNA/RNA sequences and FASTQ files. This tool allows sequence manipulation and filtering based on specific criteria. | <img src="tool_pict.png" alt="Project Logo" width="300"/> |
 |:--------------------------------------------------------|:-------------------------------------------------------:|
 
-Author:  
+**Author:**  
 **Software, Idea, Testing**: [*Bulat Rakhimov*](https://t.me/bulatych_7)  
-## Content
-- [Description](##description)
-- [Installation](##Installation)
-- [Examples](##Examples)
-- [FAQ](##FAQ)
-- [Contact](##contact)
-## Description
-The **Sequence_analyzer** toolkit includes the following key features:
-- **run_dna_rna_tools**: Analyze and manipulate DNA and RNA sequences. It works with additional modules that allow to perform the following operations: transcribing a sequence, returning a reverse sequence, finding a complementary chain and returning a reverse complementary sequence.
-- **filter_fastq**: Filter FASTQ sequences based on various criteria including GC content, sequence length, and quality thresholds.  The function works on the fly, accepts a fastq file,
-    selects sequences for recording and saves the filtered data. Functions checks the existence of output directory and if missing creates a folder "filtered"
-- **bio_files_processor.py**: Additional module. Consist of two functions to work with biological data. `convert_multiline_fasta_to_oneline` function reads a multi-line FASTA file and
-   concatenates the nucleotide or protein sequences into single lines, and writes the result to a new FASTA formatted file. `parse_blast_output`  function parse a BLAST output file to extract 
-    and sort significant protein names
-The toolkit is designed to improve genomic data processing, making it accessible for both beginners and experienced users.
-## Installation
 
-To use the Sequence_analyzer toolkit, follow these steps:
+## Table of Contents
+- [Description](#description)
+- [Installation](#installation)
+- [Examples](#examples)
+- [FAQ](#faq)
+- [Contact](#contact)
+
+## Description
+The **Sequence Analyzer** toolkit provides the following key features:
+
+- **BiologicalSequence Classes**: Abstract base class and specific implementations for DNA, RNA, and protein sequences, allowing common operations like reverse sequences, transcriptions, complement sequences, and finding stop codons.
+  - **DNASequence**: Includes functions for transcription, reverse complement, and sequence validation.
+  - **RNASequence**: Implements stop codon identification.
+  - **AminoAcidSequence**: Provides functionality for identifying aromatic amino acids and counting residue occurrences.
+
+- **filter_fastq**: Filters FASTQ sequences based on GC content, sequence length, and quality threshold. The function creates an output directory ("filtered") if it does not exist and saves filtered sequences.
+
+## Installation
+To use the Sequence Analyzer toolkit, follow these steps:
 
 1. Clone the repository:
    ```bash
    git clone git@github.com:bulatych/Sequence_analyzer_tools.git
    cd Sequence_analyzer_tools
-   python Sequence_analyzer.py 
+   ```
+
+2. Run the script:
+   ```bash
+   python Sequence_analyzer.py
+   ```
+
 ## Examples
-The `filter_fastq` function allows you to filter sequences based on specified criteria. Function accepts 5 arguments as input
-The function works on the fly, accepts a fastq file, selects sequences for recording and saves the filtered data. Functions
-checks the existence of output directory and if missing creates. Here’s an example of how to use it:
+
+### Filtering FASTQ Sequences
+The `filter_fastq` function filters sequences based on user-defined criteria:
+
 ```python
 from Sequence_analyzer import filter_fastq
-from additional_modules.filter_fastq import (
-    is_length_bounds,
-    gc_content_calculator,
-    calc_quality,check_quality,
-    check_length,
-    check_gc_content)
 
-# Parameteres
-gc_bounds = (0, 20)          
-length_bounds = (0, 100)         
+# Parameters
+gc_bounds = (0, 20)
+length_bounds = (0, 100)
 quality_threshold = 30
-filter_fastq("example_fastq.fastq", "filtered_fastq.fastq", (0, 20), (0, 100), 30)
+
+filter_fastq("example_fastq.fastq", "filtered_fastq.fastq", gc_bounds, length_bounds, quality_threshold)
 ```
 
-The `run_dna_rna_tools` function allows to process sequences based on procedure
-``` python
-from Sequence_analyzer import run_dna_rna_tools
-from additional_modules.dna_rna_tools import (seq_transcr, seq_reverse, seq_compl, seq_rev_compl, is_valid_sequence)
+### DNA/RNA Sequence Operations
 
-results = run_dna_rna_tools(*args)
-*seqs, procedure = args
-```
-The `convert_multiline_fasta_to_oneline` converts a multi-line FASTA file into a single-line FASTA file.
-``` python
-convert_multiline_fasta_to_oneline("example_multiline_fasta.fasta", "example_oneline_fasta.fasta")
+```python
+from Sequence_analyzer import DNASequence, RNASequence, AminoAcidSequence
+
+# DNA Sequence Example
+dna_seq = DNASequence("ATGCGT")
+print(dna_seq.reverse())  # Reverse sequence
+print(dna_seq.complement())  # Complement sequence
+print(dna_seq.transcribe())  # Transcribe to RNA
+
+# RNA Sequence Example
+rna_seq = RNASequence("AUGCGU")
+print(rna_seq.find_stop_codons(str(rna_seq)))  # Identify stop codons
+
+# Amino Acid Sequence Example
+protein_seq = AminoAcidSequence("ACDEFGHIKLM")
+print(protein_seq.count_repeating_amino(str(protein_seq)))  # Count amino acids
 ```
 
-The `parse_blast_output` parses a BLAST output file to extract and sort significant protein names
-``` python
-parse_blast_output("example_blast_results.txt", "proteins_name")
-```
 ## FAQ
-**1. What is the purpose of the Sequence_analyzer toolkit?**  
-The toolkit is designed to assist researchers in analyzing and filtering genomic data efficiently. It offers functions for processing DNA/RNA and FASTQ sequences, making data handling easier.
+
+**1. What is the purpose of the Sequence Analyzer toolkit?**  
+This toolkit helps researchers process and analyze genomic data efficiently by providing tools for sequence manipulation and filtering FASTQ sequences.
 
 **2. Can I use this toolkit for other sequencing formats?**  
-Currently, the toolkit is focused on DNA/RNA and FASTQ sequences. Support for other formats may be added in future releases.
+Currently, the toolkit supports DNA, RNA, and FASTQ sequences. Future updates may include additional formats.
 
+**3. Where are the filtered sequences stored?**  
+The filtered sequences are saved in the `filtered/` directory created automatically if it does not exist.
 
 ## Contact
-Please report any problems directly to the [GitHub](https://github.com/bulatych).  
-Also, you can send your feedback to rah.bulat7@yandex.ru.
+For any issues or feature requests, feel free to contact: [*Bulat Rakhimov*](https://t.me/bulatych_7)
+
+
 
