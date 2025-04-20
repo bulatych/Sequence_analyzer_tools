@@ -3,6 +3,8 @@ import os
 from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 from typing import Dict, Union, Tuple
+import argparse
+import logging
 
 
 class BiologicalSequence(ABC):
@@ -36,9 +38,6 @@ class BiologicalSequence(ABC):
     def _check_alphabet(self) -> bool:
         return all(base in self.alphabet for base in self.sequence)
 
-    # @abstractmethod
-    # def complement(self):
-    #     pass
     @abstractmethod
     def reverse(self):
         pass
@@ -83,19 +82,20 @@ class RNASequence(NucleicAcidSequence):
     def __init__(self, sequence: str):
         super().__init__(sequence, {"A", "U", "C", "G"})
 
-    def find_stop_codons(self, rna_sequence: str):
-         """
+    def find_stop_codons(self):
+        """
         Identify positions of stop codons in an RNA sequence.
 
         :param rna_sequence: A string representing the RNA sequence.
         :return: A list of indices where stop codons occur.
         """
         stop_positions = []
-        for i in range(0, len(rna_sequence) - 2, 3):
-            codon = rna_sequence[i:i + 3]
+        for i in range(0, len(self.sequence) - 2, 3):
+            codon = self.sequence[i:i + 3]
             if codon in self.stop_codons:
                 stop_positions.append(i)
         return stop_positions
+
 
 
 class AminoAcidSequence(BiologicalSequence):
@@ -133,23 +133,24 @@ class AminoAcidSequence(BiologicalSequence):
         return amino in {"F", "W", "Y"}
 
     def count_repeating_amino(self, amino_sequence):
-          """
+        """
         Count occurrences of each amino acid in a sequence.
 
         :param amino_sequence: A string representing the amino acid sequence.
         :return: A dictionary with amino acids as keys and their counts as values.
         """
         amino_count = {}
-        for amino in amino_sequence:
-            if amino in amino_count:
-                amino_count[amino] += 1
-            else:
-                amino_count[amino] = 1
+        for amino in self.sequence:
+            amino_count[amino] = amino_count.get(amino, 0) + 1
         return amino_count
 
-    def _check_alphabet(self) -> bool:
-        amino_acids = set("ACDEFGHIKLMNPQRSTVWY")
-        return all(residue in amino_acids for residue in self.sequence)
+
+
+logging.basicConfig(
+    filename="filter_fastq.log",  
+    level=logging.DEBUG, 
+    format="%(asctime)s - %(levelname)s - %(message)s",  
+)
 
 
 def filter_fastq(
@@ -168,32 +169,64 @@ def filter_fastq(
     :param length_bounds: Tuple representing the min and max length of sequences allowed.
     :param quality_threshold: Minimum average quality score required.
     """
+    logging.info(f"Starting to filter the FASTQ file: {input_fastq}")
 
     if isinstance(gc_bounds, (int, float)):
         gc_bounds = (0, gc_bounds)
     if isinstance(length_bounds, (int)):
         length_bounds = (0, length_bounds)
 
-    output_dir = "filtered"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    output_path = os.path.join(output_dir, output_fastq)
+    output_path = output_fastq
 
-    with open(input_fastq, "r") as file_in, open(output_path, "w") as file_out:
-        for record in SeqIO.parse(file_in, "fastq"):
-            sequence = record.seq
-            quality = record.letter_annotations.get("phred_quality", [])
+    try:
+        with open(input_fastq, "r") as file_in, open(output_path, "w") as file_out:
+            for record in SeqIO.parse(file_in, "fastq"):
+                sequence = record.seq
+                quality = record.letter_annotations.get("phred_quality", [])
+    
+                if not (length_bounds[0] <= len(sequence) <= length_bounds[1]):
+                    continue
+    
+                avg_quality = sum(quality) / len(quality) if quality else 0
+                if avg_quality < quality_threshold:
+                    continue
+                gc_content = gc_fraction(sequence) * 100
+                if not (gc_bounds[0] <= gc_content <= gc_bounds[1]):
+                    continue
+    
+                SeqIO.write(record, file_out, "fastq")
+    
+        print(f"All sequences were filtered and saved in: '{output_path}'.")
+        
+        logging.info(f"Filtering completed. Output file: {output_path}")
+        
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        raise
+        
 
-            if not (length_bounds[0] <= len(sequence) <= length_bounds[1]):
-                continue
 
-            avg_quality = sum(quality) / len(quality) if quality else 0
-            if avg_quality < quality_threshold:
-                continue
-            gc_content = gc_fraction(sequence) * 100
-            if not (gc_bounds[0] <= gc_content <= gc_bounds[1]):
-                continue
 
-            SeqIO.write(record, file_out, "fastq")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Filter Fastq sequnces by GC content, quality and length")
+    parser.add_argument('-i', "--input", required= True, help = "Path to the input file")
+    parser.add_argument('-o', "--output", required= True, help = "Name of the output file")
+    parser.add_argument("--gc_bounds", nargs="+", type=float, default=[0, 100], help="GC content bounds.")
+    parser.add_argument("--length_bounds", nargs="+", type=int, default=[0, 2**32], help ="Length of bounds")    
+    parser.add_argument('-q', "--quality_ths", type=int, default=0, help= "Minimum average quality threshold")
+    args = parser.parse_args()
+    gc_bounds = tuple(args.gc_bounds) if len(args.gc_bounds) == 2 else args.gc_bounds[0]
+    length_bounds = tuple(args.length_bounds) if len(args.length_bounds) == 2 else args.length_bounds[0]
 
-    print(f"All sequences were filtered and saved in: '{output_path}'.")
+    filter_fastq(
+        input_fastq=args.input,
+        output_fastq=args.output,
+        gc_bounds=gc_bounds,
+        length_bounds=length_bounds,
+        quality_threshold=args.quality_ths,
+    )
+
+
+
+
+
